@@ -14,7 +14,7 @@ fi
 operation=$1
 # 获取tomcat的绝对路径
 tomcat_path=`readlink -f "$2"`
-process_flag="Dcatalina.home=${tomcat_path}"
+process_flag="Djava.util.logging.config.file=${tomcat_path}/conf/logging.properties"
 isrun="yes";#yes表示进程存在，no表示进程不存在
 
 # 判断tomcat目录是否存在
@@ -27,6 +27,8 @@ fi
 function check_process_isrun()
 {
     echo "  `date '+%Y/%m/%d %H:%M:%S'` ${FUNCNAME[@]} start"
+	
+	ps -ef | grep -w "${process_flag}"
 	
     process_count=$(ps -ef | grep -w "${process_flag}" | grep -vw "grep -w ${process_flag}" | wc -l)
     echo "process_count:$process_count"
@@ -133,8 +135,8 @@ case "${operation}" in
 	        exit 1;
 		fi
 	else
-        echo "  The process is already stopped, please check: ${tomcat_path}"
-		exit 1;
+        echo "  The process is already stopped before this command, please check: ${tomcat_path}"
+		#exit 1;
 	fi
 ;;
 "status")
